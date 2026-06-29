@@ -43,11 +43,10 @@ if [[ ! -f "$P8_FILE" ]]; then
 fi
 P8_FILE="$(cd "$(dirname "$P8_FILE")" && pwd)/$(basename "$P8_FILE")"
 
-BUILD_NUMBER="${BUILD_NUMBER:-$(TZ=Asia/Shanghai date "+%m%d%H%M")}"
+source "${ROOT}/ci/scripts/allocate-build-number.sh"
+BUILD_NUMBER="${BUILD_NUMBER:-10000}"
 MARKETING_VERSION="1.0.0"
 BUILD_NAME="1.0.0"
-
-echo "Build number (MMDDHHmm): ${BUILD_NUMBER}"
 
 KEYCHAIN_PASSWORD="${KEYCHAIN_PASSWORD:-$(openssl rand -base64 32)}"
 APP_NAME="${APP_NAME:-飞语陪伴}"
