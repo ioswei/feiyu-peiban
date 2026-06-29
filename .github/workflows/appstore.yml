@@ -19,11 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install xcpretty
-        run: gem install xcpretty -NV --no-document
-
       - name: Load config from repository
         run: bash ci/scripts/load-repo-config.sh
+
+      - name: Ensure App Store provisioning profile
+        run: python3 ci/scripts/ensure-appstore-profile.py
 
       - name: Import distribution certificate
         run: bash ci/scripts/import-signing.sh

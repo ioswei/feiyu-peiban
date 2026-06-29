@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-KEYCHAIN_PATH="${RUNNER_TEMP:-/tmp}/build.keychain-db"
+KEYCHAIN_PATH="${RUNNER_TEMP:-/tmp}/build-${GITHUB_RUN_ID:-local}.keychain-db"
 CERT_PATH="${RUNNER_TEMP:-/tmp}/build_certificate.p12"
 PROFILE_PATH="${RUNNER_TEMP:-/tmp}/build.mobileprovision"
 PROFILE_DIR="${HOME}/Library/MobileDevice/Provisioning Profiles"
@@ -18,9 +18,24 @@ else
   exit 1
 fi
 
+security delete-keychain "$KEYCHAIN_PATH" >/dev/null 2>&1 || true
+
 security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
 security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+import_apple_ca() {
+  local url="$1"
+  local file="${RUNNER_TEMP:-/tmp}/$(basename "$url")"
+  curl -fsSL "$url" -o "$file"
+  security import "$file" -k "$KEYCHAIN_PATH" -A -T /usr/bin/codesign -T /usr/bin/security
+}
+
+import_apple_ca "https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer"
+import_apple_ca "https://www.apple.com/certificateauthority/AppleWWDRCAG4.cer"
+import_apple_ca "https://www.apple.com/certificateauthority/AppleWWDRCAG5.cer"
+import_apple_ca "https://www.apple.com/certificateauthority/AppleWWDRCAG6.cer"
+import_apple_ca "https://www.apple.com/appleca/AppleIncRootCertificate.cer"
 
 security import "$CERT_PATH" \
   -P "$P12_PASSWORD" \
@@ -31,6 +46,9 @@ security import "$CERT_PATH" \
 security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
 security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+echo "KEYCHAIN_PATH=${KEYCHAIN_PATH}" >> "${GITHUB_ENV:-/dev/null}"
+echo "Using keychain: ${KEYCHAIN_PATH}"
 
 if [[ -n "${PROVISIONING_PROFILE_BASE64:-}" ]]; then
   echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"

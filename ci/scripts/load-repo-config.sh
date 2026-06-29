@@ -7,6 +7,7 @@ ROOT="${GITHUB_WORKSPACE:-$(cd "$(dirname "$0")/../.." && pwd)}"
 CONFIG_DIR="${ROOT}/Config"
 CONFIG_DOC="${ROOT}/docs/配置信息.md"
 P12_FILE="${CONFIG_DIR}/P12证书.p12"
+P12_FILE="$(cd "$(dirname "$P12_FILE")" && pwd)/$(basename "$P12_FILE")"
 
 if [[ ! -f "$CONFIG_DOC" ]]; then
   echo "缺少配置: ${CONFIG_DOC}"
@@ -38,6 +39,7 @@ if [[ ! -f "$P8_FILE" ]]; then
   echo "缺少 API 密钥: ${P8_FILE}"
   exit 1
 fi
+P8_FILE="$(cd "$(dirname "$P8_FILE")" && pwd)/$(basename "$P8_FILE")"
 
 KEYCHAIN_PASSWORD="${KEYCHAIN_PASSWORD:-$(openssl rand -base64 32)}"
 
