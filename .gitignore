@@ -1,0 +1,14 @@
+# Xcode user data
+*.xcuserstate
+xcuserdata/
+
+# macOS
+.DS_Store
+
+# Signing credentials (never commit)
+Config/
+*.p12
+*.p8
+
+# Local secrets / credentials docs
+docs/配置信息.md
