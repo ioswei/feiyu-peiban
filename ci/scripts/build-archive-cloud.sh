@@ -18,6 +18,9 @@ EXPORT_PATH="${EXPORT_PATH:-build/export}"
 
 mkdir -p build
 
+echo "Xcode: $(xcodebuild -version | tr '\n' ' ')"
+echo "iOS SDK: $(xcrun --sdk iphoneos --show-sdk-version)"
+
 if [[ -n "${KEYCHAIN_PATH:-}" && -n "${KEYCHAIN_PASSWORD:-}" ]]; then
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
   security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"

@@ -25,14 +25,18 @@ concurrency:
 
 jobs:
   build-and-upload:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 90
     env:
       TESTFLIGHT_GROUP: ${{ github.event.inputs.testflight_group || 'test' }}
+      TOOLCHAINS: com.apple.dt.toolchain.XcodeDefault
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Select Xcode 26
+        run: bash ci/scripts/select-xcode-26.sh
 
       - name: Show commit
         run: git rev-parse --short HEAD
