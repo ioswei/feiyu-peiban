@@ -43,8 +43,10 @@ if [[ ! -f "$P8_FILE" ]]; then
 fi
 P8_FILE="$(cd "$(dirname "$P8_FILE")" && pwd)/$(basename "$P8_FILE")"
 
-BUILD_NUMBER="$(awk '/CURRENT_PROJECT_VERSION/{print $3; exit}' "${ROOT}/FlnutSpeakPlus.xcodeproj/project.pbxproj" | tr -d ' ;')"
+BUILD_NUMBER="${BUILD_NUMBER:-$(TZ=Asia/Shanghai date "+%m%d%H%M")}"
 BUILD_NAME="$(awk '/MARKETING_VERSION/{print $3; exit}' "${ROOT}/FlnutSpeakPlus.xcodeproj/project.pbxproj" | tr -d ' ;')"
+
+echo "Build number (MMDDHHmm): ${BUILD_NUMBER}"
 
 KEYCHAIN_PASSWORD="${KEYCHAIN_PASSWORD:-$(openssl rand -base64 32)}"
 APP_NAME="${APP_NAME:-飞语陪伴}"

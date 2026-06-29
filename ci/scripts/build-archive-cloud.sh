@@ -21,6 +21,10 @@ mkdir -p build
 echo "Xcode: $(xcodebuild -version | tr '\n' ' ')"
 echo "iOS SDK: $(xcrun --sdk iphoneos --show-sdk-version)"
 
+: "${BUILD_NUMBER:?BUILD_NUMBER is required}"
+
+echo "Marketing version: ${MARKETING_VERSION:-1.0.0}, Build: ${BUILD_NUMBER}"
+
 if [[ -n "${KEYCHAIN_PATH:-}" && -n "${KEYCHAIN_PASSWORD:-}" ]]; then
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
   security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
@@ -36,7 +40,9 @@ xcodebuild archive \
   CODE_SIGN_STYLE=Manual \
   DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
   CODE_SIGN_IDENTITY="Apple Distribution" \
-  PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_NAME"
+  PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_NAME" \
+  CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+  MARKETING_VERSION="${MARKETING_VERSION:-1.0.0}"
 
 xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
