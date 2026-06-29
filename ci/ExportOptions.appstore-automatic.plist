@@ -5,14 +5,9 @@
 	<key>method</key>
 	<string>app-store-connect</string>
 	<key>signingStyle</key>
-	<string>manual</string>
+	<string>automatic</string>
 	<key>teamID</key>
 	<string>__APPLE_TEAM_ID__</string>
-	<key>provisioningProfiles</key>
-	<dict>
-		<key>com.ivangaro.feiyuunte</key>
-		<string>__PROVISIONING_PROFILE_NAME__</string>
-	</dict>
 	<key>uploadSymbols</key>
 	<true/>
 	<key>compileBitcode</key>
