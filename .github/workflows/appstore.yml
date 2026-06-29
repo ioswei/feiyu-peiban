@@ -2,6 +2,17 @@ name: App Store Release
 
 on:
   workflow_dispatch:
+    inputs:
+      testflight_group:
+        description: TestFlight 外部测试组名称
+        required: false
+        default: test
+        type: string
+      distribute_external:
+        description: 上传后分发到外部测试组
+        required: false
+        default: true
+        type: boolean
   push:
     branches:
       - main
@@ -15,7 +26,9 @@ concurrency:
 jobs:
   build-and-upload:
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 90
+    env:
+      TESTFLIGHT_GROUP: ${{ github.event.inputs.testflight_group || 'test' }}
 
     steps:
       - name: Checkout
@@ -24,17 +37,26 @@ jobs:
       - name: Show commit
         run: git rev-parse --short HEAD
 
+      - name: Install fastlane
+        run: brew install fastlane
+
       - name: Load config from repository
         run: bash ci/scripts/load-repo-config.sh
 
-      - name: Ensure App Store provisioning profile
-        run: python3 ci/scripts/ensure-appstore-profile.py
+      - name: Prepare App Store Connect API key JSON
+        run: bash ci/scripts/write-api-key-json.sh
+
+      - name: Fetch App Store provisioning profiles
+        run: bash ci/scripts/fetch-appstore-profiles.sh
 
       - name: Import distribution certificate
         run: bash ci/scripts/import-signing.sh
 
+      - name: Configure manual signing
+        run: bash ci/scripts/configure-manual-signing.sh
+
       - name: Build and export IPA
         run: bash ci/scripts/build-archive-cloud.sh
 
-      - name: Upload to TestFlight
-        run: bash ci/scripts/upload-testflight.sh
+      - name: Upload and distribute to TestFlight
+        run: bash ci/scripts/distribute-testflight.sh

@@ -8,3 +8,4 @@ xcuserdata/
 # Build artifacts
 build/
 DerivedData/
+ci/ExportOptions.generated.plist

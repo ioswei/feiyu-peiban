@@ -9,8 +9,7 @@ PROJECT="${XCODE_PROJECT:-FlnutSpeakPlus.xcodeproj}"
 CONFIGURATION="${BUILD_CONFIGURATION:-Release}"
 ARCHIVE_PATH="${ARCHIVE_PATH:-build/FlnutSpeakPlus.xcarchive}"
 EXPORT_PATH="${EXPORT_PATH:-build/export}"
-EXPORT_OPTIONS_TEMPLATE="${EXPORT_OPTIONS_TEMPLATE:-ci/ExportOptions.appstore.plist}"
-EXPORT_OPTIONS_PATH="${RUNNER_TEMP:-/tmp}/ExportOptions.plist"
+EXPORT_OPTIONS_PATH="${EXPORT_OPTIONS_PLIST:-ci/ExportOptions.generated.plist}"
 
 mkdir -p build
 
@@ -19,11 +18,6 @@ if [[ -n "${KEYCHAIN_PATH:-}" && -n "${KEYCHAIN_PASSWORD:-}" ]]; then
   security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
   security list-keychain -d user -s "$KEYCHAIN_PATH"
 fi
-
-sed \
-  -e "s/__APPLE_TEAM_ID__/${APPLE_TEAM_ID}/g" \
-  -e "s/__PROVISIONING_PROFILE_NAME__/${PROVISIONING_PROFILE_NAME}/g" \
-  "$EXPORT_OPTIONS_TEMPLATE" > "$EXPORT_OPTIONS_PATH"
 
 xcodebuild archive \
   -project "$PROJECT" \
