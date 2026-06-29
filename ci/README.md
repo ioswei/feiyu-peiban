@@ -1,37 +1,27 @@
 # CI / App Store 发布
 
-## 本地配置
+证书与配置直接存放在仓库内，GitHub Actions 检出后自动读取，**无需配置 GitHub Secrets**。
+
+## 仓库内配置文件
 
 | 路径 | 用途 |
 |------|------|
 | `Config/P12证书.p12` | Apple Distribution 签名证书 |
-| `Config/Usr-P8/AuthKey_*.p8` | App Store Connect API 密钥（上传 TestFlight） |
-| `docs/配置信息.md` | P12 密码、Issuer ID、密钥 ID |
-
-证书与密钥**不会**提交到 Git，仅通过 GitHub Secrets 注入 CI。
-
-## 一次性：同步 Secrets 到 GitHub
-
-```bash
-bash ci/scripts/setup-github-secrets.sh
-```
-
-脚本会读取本地 `Config/` 与 `docs/配置信息.md`，并写入以下 Secrets：
-
-- `BUILD_CERTIFICATE_BASE64` / `P12_PASSWORD` / `KEYCHAIN_PASSWORD`
-- `APPLE_TEAM_ID`
-- `APPSTORE_ISSUER_ID` / `APPSTORE_KEY_ID` / `APPSTORE_PRIVATE_KEY`
+| `Config/Usr-P8/AuthKey_*.p8` | App Store Connect API 密钥 |
+| `docs/配置信息.md` | P12 密码、Team ID、Issuer ID、密钥 ID |
 
 ## 触发打包
 
 1. **手动**：GitHub → Actions → **App Store Release** → Run workflow
 2. **Tag**：`git tag v1.0.0 && git push origin v1.0.0`
 
-## 流程说明
+## CI 流程
 
-CI 使用 **Xcode 云签名**（`-allowProvisioningUpdates` + App Store Connect API），无需本地 `.mobileprovision` 文件。
+1. `load-repo-config.sh` — 读取 `Config/` 与 `docs/配置信息.md`
+2. `import-signing.sh` — 导入 P12 证书
+3. `build-archive-cloud.sh` — Xcode 云签名打包
+4. `upload-testflight.sh` — 上传到 TestFlight
 
-1. 导入 P12 证书到临时 Keychain
-2. 准备 API 密钥文件
-3. `xcodebuild archive` + `exportArchive` 生成 IPA
-4. `altool` 上传到 TestFlight / App Store Connect
+## 安全提示
+
+证书与 API 密钥已纳入版本库。请确保仓库为**私有**，并限制协作者访问权限。

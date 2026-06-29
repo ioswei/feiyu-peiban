@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-: "${BUILD_CERTIFICATE_BASE64:?BUILD_CERTIFICATE_BASE64 is required}"
-: "${P12_PASSWORD:?P12_PASSWORD is required}"
-: "${KEYCHAIN_PASSWORD:?KEYCHAIN_PASSWORD is required}"
-
 KEYCHAIN_PATH="${RUNNER_TEMP:-/tmp}/build.keychain-db"
 CERT_PATH="${RUNNER_TEMP:-/tmp}/build_certificate.p12"
 PROFILE_PATH="${RUNNER_TEMP:-/tmp}/build.mobileprovision"
 PROFILE_DIR="${HOME}/Library/MobileDevice/Provisioning Profiles"
 
-echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
+: "${P12_PASSWORD:?P12_PASSWORD is required}"
+: "${KEYCHAIN_PASSWORD:?KEYCHAIN_PASSWORD is required}"
+
+if [[ -n "${P12_FILE_PATH:-}" && -f "$P12_FILE_PATH" ]]; then
+  CERT_PATH="$P12_FILE_PATH"
+elif [[ -n "${BUILD_CERTIFICATE_BASE64:-}" ]]; then
+  echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
+else
+  echo "P12_FILE_PATH or BUILD_CERTIFICATE_BASE64 is required"
+  exit 1
+fi
 
 security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
@@ -39,4 +45,6 @@ if [[ -n "${PROVISIONING_PROFILE_BASE64:-}" ]]; then
   echo "Installed provisioning profile: ${PROFILE_NAME} (${PROFILE_UUID})"
 fi
 
-rm -f "$CERT_PATH"
+if [[ -n "${BUILD_CERTIFICATE_BASE64:-}" && "$CERT_PATH" == "${RUNNER_TEMP:-/tmp}/build_certificate.p12" ]]; then
+  rm -f "$CERT_PATH"
+fi
