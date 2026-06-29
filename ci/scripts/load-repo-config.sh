@@ -44,7 +44,8 @@ fi
 P8_FILE="$(cd "$(dirname "$P8_FILE")" && pwd)/$(basename "$P8_FILE")"
 
 BUILD_NUMBER="${BUILD_NUMBER:-$(TZ=Asia/Shanghai date "+%m%d%H%M")}"
-BUILD_NAME="$(awk '/MARKETING_VERSION/{print $3; exit}' "${ROOT}/FlnutSpeakPlus.xcodeproj/project.pbxproj" | tr -d ' ;')"
+MARKETING_VERSION="1.0.0"
+BUILD_NAME="1.0.0"
 
 echo "Build number (MMDDHHmm): ${BUILD_NUMBER}"
 
@@ -90,6 +91,7 @@ append_env "APP_NAME" "$APP_NAME"
 append_env "SIGNING_DIR" "$SIGNING_DIR"
 append_env "BUILD_NUMBER" "$BUILD_NUMBER"
 append_env "BUILD_NAME" "$BUILD_NAME"
+append_env "MARKETING_VERSION" "$MARKETING_VERSION"
 append_env "TESTFLIGHT_GROUP" "$TESTFLIGHT_GROUP"
 append_env "DISTRIBUTE_EXTERNAL" "$DISTRIBUTE_EXTERNAL"
 append_env "NOTIFY_EXTERNAL_TESTERS" "$NOTIFY_EXTERNAL_TESTERS"
