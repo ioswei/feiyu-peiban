@@ -7,7 +7,7 @@ set -euo pipefail
 : "${BUNDLE_ID:?required}"
 : "${SIGNING_DIR:?required}"
 
-APP_NAME="${APP_NAME:-FlnutSpeakPlus}"
+APP_NAME="${APP_NAME:-飞语陪伴}"
 PROFILE_NAME="${PROFILE_NAME:-feiyu_AppStore_CI}"
 
 fetch_profile() {

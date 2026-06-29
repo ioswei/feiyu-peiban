@@ -47,7 +47,7 @@ BUILD_NUMBER="$(awk '/CURRENT_PROJECT_VERSION/{print $3; exit}' "${ROOT}/FlnutSp
 BUILD_NAME="$(awk '/MARKETING_VERSION/{print $3; exit}' "${ROOT}/FlnutSpeakPlus.xcodeproj/project.pbxproj" | tr -d ' ;')"
 
 KEYCHAIN_PASSWORD="${KEYCHAIN_PASSWORD:-$(openssl rand -base64 32)}"
-APP_NAME="${APP_NAME:-FlnutSpeakPlus}"
+APP_NAME="${APP_NAME:-飞语陪伴}"
 TESTFLIGHT_GROUP="${TESTFLIGHT_GROUP:-test}"
 DISTRIBUTE_EXTERNAL="${DISTRIBUTE_EXTERNAL:-true}"
 NOTIFY_EXTERNAL_TESTERS="${NOTIFY_EXTERNAL_TESTERS:-true}"
