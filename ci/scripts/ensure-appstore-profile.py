@@ -165,7 +165,7 @@ def main() -> None:
 
     profile_name, profile_path = install_profile(profile["attributes"]["profileContent"])
     append_github_env("PROVISIONING_PROFILE_NAME", profile_name)
-    append_github_env("PROVISIONING_PROFILE_PATH", profile_path)
+    append_github_env("IOS_RUNNER_PROFILE_NAME", profile_name)
     print(f"Installed provisioning profile: {profile_name}")
     print(f"Profile path: {profile_path}")
 

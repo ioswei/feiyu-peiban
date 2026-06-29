@@ -7,7 +7,8 @@ set -euo pipefail
 : "${BUNDLE_ID:?required}"
 : "${SIGNING_DIR:?required}"
 
-APP_NAME="${APP_NAME:-App}"
+APP_NAME="${APP_NAME:-FlnutSpeakPlus}"
+PROFILE_NAME="${PROFILE_NAME:-feiyu_AppStore_CI}"
 
 fetch_profile() {
   local bundle_id="$1"
@@ -58,7 +59,7 @@ install_profile() {
 mkdir -p "$SIGNING_DIR"
 
 echo "▶ 拉取 App Store Profile (fastlane sigh --force)..."
-fetch_profile "$BUNDLE_ID" "${APP_NAME} AppStore" "runner.mobileprovision"
+fetch_profile "$BUNDLE_ID" "$PROFILE_NAME" "runner.mobileprovision"
 install_profile "${SIGNING_DIR}/runner.mobileprovision" "IOS_RUNNER"
 
 echo "✅ Profile ready: ${IOS_RUNNER_PROFILE_NAME}"

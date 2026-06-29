@@ -2,14 +2,19 @@
 set -euo pipefail
 
 : "${APPLE_TEAM_ID:?APPLE_TEAM_ID is required}"
-: "${PROVISIONING_PROFILE_NAME:?PROVISIONING_PROFILE_NAME is required}"
+PROVISIONING_PROFILE_NAME="${PROVISIONING_PROFILE_NAME:-${IOS_RUNNER_PROFILE_NAME:?PROVISIONING_PROFILE_NAME is required}}"
+EXPORT_OPTIONS_PATH="${EXPORT_OPTIONS_PLIST:-ci/ExportOptions.generated.plist}"
+
+if [[ ! -f "$EXPORT_OPTIONS_PATH" ]]; then
+  echo "缺少 ExportOptions: ${EXPORT_OPTIONS_PATH}（configure-manual-signing 是否已执行？）"
+  exit 1
+fi
 
 SCHEME="${SCHEME:-FlnutSpeakPlus}"
 PROJECT="${XCODE_PROJECT:-FlnutSpeakPlus.xcodeproj}"
 CONFIGURATION="${BUILD_CONFIGURATION:-Release}"
 ARCHIVE_PATH="${ARCHIVE_PATH:-build/FlnutSpeakPlus.xcarchive}"
 EXPORT_PATH="${EXPORT_PATH:-build/export}"
-EXPORT_OPTIONS_PATH="${EXPORT_OPTIONS_PLIST:-ci/ExportOptions.generated.plist}"
 
 mkdir -p build
 

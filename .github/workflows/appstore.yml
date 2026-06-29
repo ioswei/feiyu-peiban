@@ -46,8 +46,8 @@ jobs:
       - name: Prepare App Store Connect API key JSON
         run: bash ci/scripts/write-api-key-json.sh
 
-      - name: Fetch App Store provisioning profiles
-        run: bash ci/scripts/fetch-appstore-profiles.sh
+      - name: Ensure App Store provisioning profile
+        run: bash ci/scripts/ensure-provisioning-profile.sh
 
       - name: Import distribution certificate
         run: bash ci/scripts/import-signing.sh

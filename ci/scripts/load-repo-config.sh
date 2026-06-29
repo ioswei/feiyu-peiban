@@ -95,5 +95,6 @@ append_env "SUBMIT_BETA_REVIEW" "$SUBMIT_BETA_REVIEW"
 append_env "WAIT_TIMEOUT_SECONDS" "$WAIT_TIMEOUT_SECONDS"
 append_env "WHATS_NEW" "$WHATS_NEW"
 append_env "EXPORT_OPTIONS_PLIST" "${ROOT}/ci/ExportOptions.generated.plist"
+append_env "PROFILE_NAME" "feiyu_AppStore_CI"
 
 echo "Loaded CI config (Team: ${APPLE_TEAM_ID}, Bundle: ${BUNDLE_ID}, Build: ${BUILD_NAME}+${BUILD_NUMBER})"
